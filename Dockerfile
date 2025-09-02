@@ -1,7 +1,13 @@
-# file: Dockerfile (place this in repo root)
-FROM eclipse-temurin:17-jre
-VOLUME /appdata
-COPY target/demo-0.0.1-SNAPSHOT.jar /app/app.jar
+# build stage (not used in Jenkins Docker build if you build jar first via Maven)
+FROM maven:3.9.0-eclipse-temurin-17 AS build
 WORKDIR /app
-EXPOSE 8080
+COPY pom.xml .
+COPY src ./src
+RUN mvn -B -DskipTests package
+
+# runtime stage
+FROM eclipse-temurin:17-jre
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} /app/app.jar
 ENTRYPOINT ["java","-jar","/app/app.jar"]
+EXPOSE 8080
