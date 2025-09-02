@@ -25,17 +25,7 @@ pipeline {
         sh './mvnw clean package -DskipTests'
     }
 }
-{
-      steps {
-        sh 'mvn -B -DskipTests package'
-      }
-    }
 
-    stage('Test') {
-      steps {
-        sh 'mvn test'
-      }
-    }
 
     stage('SonarQube Analysis') {
       steps {
